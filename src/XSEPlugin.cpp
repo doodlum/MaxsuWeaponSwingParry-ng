@@ -11,12 +11,14 @@ int precisionParryFlag = -1;
 
 PRECISION_API::PreHitCallbackReturn PrecisionPreHit(const PRECISION_API::PrecisionHitData& a_precisionHitData)
 {
-	auto hit_causer = a_precisionHitData.attacker;
-	if (auto hit_target = a_precisionHitData.target->As<RE::Actor>()) {
-		if (MaxsuWeaponParry::ParryCheck::ShouldParry(hit_causer, hit_target)) {
-			logger::debug(FMT_STRING("Weapon Swing Parry Trigger! Attacker ID is {:x},  target ID is {:x}"), hit_causer->GetFormID(), hit_target->GetFormID());
-			hit_target->SetGraphVariableBool("IsBlocking", true);
-			precisionParryFlag = 1; // set
+	if (a_precisionHitData.attacker && a_precisionHitData.target) {
+		auto hit_causer = a_precisionHitData.attacker;
+		if (auto hit_target = a_precisionHitData.target->As<RE::Actor>()) {
+			if (MaxsuWeaponParry::ParryCheck::ShouldParry(hit_causer, hit_target)) {
+				logger::debug(FMT_STRING("Weapon Swing Parry Trigger! Attacker ID is {:x},  target ID is {:x}"), hit_causer->GetFormID(), hit_target->GetFormID());
+				hit_target->SetGraphVariableBool("IsBlocking", true);
+				precisionParryFlag = 1;	 // set
+			}
 		}
 	}
 	PRECISION_API::PreHitCallbackReturn toReturn;
@@ -25,9 +27,10 @@ PRECISION_API::PreHitCallbackReturn PrecisionPreHit(const PRECISION_API::Precisi
 
 void PrecisionPostHit(const PRECISION_API::PrecisionHitData& a_precisionHitData, const RE::HitData&)
 {
-	auto hit_causer = a_precisionHitData.attacker;
-	if (precisionParryFlag){
-		if (auto hit_target = a_precisionHitData.target->As<RE::Actor>() ) {
+	if (a_precisionHitData.attacker && a_precisionHitData.target) {
+		auto hit_causer = a_precisionHitData.attacker;
+		if (precisionParryFlag) {
+			if (auto hit_target = a_precisionHitData.target->As<RE::Actor>()) {
 				bool recoil = false;
 				if (hit_causer->GetGraphVariableBool("IsRecoiling", recoil) && recoil) {
 					logger::debug(FMT_STRING("Attacker is recoling, ID is {:x}"), hit_causer->GetFormID());
@@ -35,6 +38,7 @@ void PrecisionPostHit(const PRECISION_API::PrecisionHitData& a_precisionHitData,
 				}
 				hit_target->SetGraphVariableBool("IsBlocking", false);
 			}
+		}
 	}
 	precisionParryFlag = -1; // clear
 }

@@ -10,7 +10,7 @@ namespace MaxsuWeaponParry
 		 if (ParryCheck::ShouldParry(hit_causer, hit_target)){
 			 logger::debug(FMT_STRING("Weapon Swing Parry Trigger! Attacker ID is {:x},  target ID is {:x}"), hit_causer->GetFormID(), hit_target->GetFormID());
 
-			 hit_target->SetGraphVariableBool("Isblocking", true);
+			 hit_target->SetGraphVariableBool("IsBlocking", true);
 			 _OnMeleeHit(hit_causer, hit_target, a_int1, a_bool, a_unkptr);
 
 			 bool recoil = false;
@@ -19,7 +19,7 @@ namespace MaxsuWeaponParry
 				 SendRecoil(hit_target);
 			 }
 
-			 hit_target->SetGraphVariableBool("Isblocking", false);
+			 hit_target->SetGraphVariableBool("IsBlocking", false);
 			 return; 
 		 }
 

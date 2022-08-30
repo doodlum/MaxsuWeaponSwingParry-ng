@@ -6,10 +6,10 @@ namespace MaxsuLogsBackUpNamespace
 
 	bool CreateBackUpLogs(const std::wstring log_path, unsigned int logs_num)
 	{
-		if (!std::filesystem::exists(log_path)) //判断路劲下的log文件是否存在
+		if (!std::filesystem::exists(log_path)) 
 			return false;
 
-		//-------------循环生成并覆盖现有的log文件备份----------------------------
+
 
 		for (unsigned int i = logs_num - 1; i >= 0; i--)
 		{

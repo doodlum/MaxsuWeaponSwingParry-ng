@@ -126,13 +126,13 @@ namespace MaxsuWeaponParry
 
 	void ParryCheck::SetVariables(RE::Actor* hit_causer, RE::Actor* hit_target)
 	{
-		hit_target->SetGraphVariableBool("bSWP_InWeaponParry", true);
-		hit_causer->SetGraphVariableBool("bSWP_InWeaponParry", true);
+		hit_target->SetGraphVariableBool("bMaxsuWeaponParry_InWeaponParry", true);
+		hit_causer->SetGraphVariableBool("bMaxsuWeaponParry_InWeaponParry", true);
 	}
 
 	void ParryCheck::ResetVariables(RE::Actor* hit_causer, RE::Actor* hit_target)
 	{
-		hit_target->SetGraphVariableBool("bSWP_InWeaponParry", false);
-		hit_causer->SetGraphVariableBool("bSWP_InWeaponParry", false);
+		hit_target->SetGraphVariableBool("bMaxsuWeaponParry_InWeaponParry", false);
+		hit_causer->SetGraphVariableBool("bMaxsuWeaponParry_InWeaponParry", false);
 	}
 }

@@ -2,6 +2,7 @@
     {
         "projectPath": "Actors",
         "type": "kBool",
-        "name": "bSWP_InWeaponParry"     
+        "name": "bMaxsuWeaponParry_InWeaponParry",
+        "value": false     
     }
 ]

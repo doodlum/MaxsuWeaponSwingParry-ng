@@ -10,6 +10,9 @@ namespace MaxsuWeaponParry
 
 		static bool ShouldParry(RE::Actor* hit_causer, RE::Actor* hit_target);
 
+		static void SetVariables(RE::Actor* hit_causer, RE::Actor* hit_target);
+		static void ResetVariables(RE::Actor* hit_causer, RE::Actor* hit_target);
+
 	private:
 		static bool IsParryableWeapon(RE::TESForm* thisWeapon);
 

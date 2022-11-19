@@ -2,19 +2,18 @@
 
 namespace MaxsuWeaponParry
 {
-
 	bool ParryCheck::IsParryableWeapon(RE::TESForm* thisWeapon)
 	{
 		using type = RE::WEAPON_TYPE;
 
-		if (!thisWeapon){
+		if (!thisWeapon) {
 			logger::debug("Weapon Form Not Found!");
 			return false;
 		}
 
 		auto Weap = thisWeapon->As<RE::TESObjectWEAP>();
 
-		if (!Weap){
+		if (!Weap) {
 			logger::debug("Weapon Obj Not Found!");
 			return false;
 		}
@@ -22,18 +21,16 @@ namespace MaxsuWeaponParry
 		return (!Weap->IsHandToHandMelee() && !Weap->IsOneHandedDagger() && Weap->IsMelee());
 	}
 
-
 	bool ParryCheck::AttackingWithParryableWeapon(RE::AIProcess* a_process)
 	{
 		using FLAG = RE::AttackData::AttackFlag;
 
-		if (a_process && a_process->high && a_process->high->attackData && !a_process->high->attackData->data.flags.all(FLAG::kBashAttack)) 	
+		if (a_process && a_process->high && a_process->high->attackData && !a_process->high->attackData->data.flags.all(FLAG::kBashAttack))
 			return (!a_process->high->attackData->IsLeftAttack() && IsParryableWeapon(a_process->GetEquippedRightHand())) ||
-				   (a_process->high->attackData->IsLeftAttack() && IsParryableWeapon(a_process->GetEquippedLeftHand()));
+			       (a_process->high->attackData->IsLeftAttack() && IsParryableWeapon(a_process->GetEquippedLeftHand()));
 
 		return false;
 	}
-
 
 	bool ParryCheck::ShouldParry(RE::Actor* hit_causer, RE::Actor* hit_target)
 	{
@@ -62,28 +59,27 @@ namespace MaxsuWeaponParry
 			return false;
 		}
 
-		if (hit_target->IsGhost() || hit_target->HasEffectWithArchetype(RE::EffectArchetypes::ArchetypeID::kEtherealize)) {
+		if (hit_target->IsGhost() || hit_target->AsMagicTarget()->HasEffectWithArchetype(RE::EffectArchetypes::ArchetypeID::kEtherealize)) {
 			logger::debug("Hit Target Is Ghost or Etherealize!");
 			return false;
 		}
 
-		if (hit_target->GetAttackState() != ATTACK_STATE::kSwing || hit_target->IsBlocking()) {
+		if (hit_target->AsActorState()->GetAttackState() != ATTACK_STATE::kSwing || hit_target->IsBlocking()) {
 			logger::debug("Hit Target Is Not Weapon Swing Parrying!");
 			return false;
 		}
 
-		if (!hit_target->currentProcess) {
+		if (!hit_target->GetActorRuntimeData().currentProcess) {
 			logger::debug("Hit Target AI Process Not Found!");
 			return false;
 		}
 
-		if (!ParryCheck::AttackingWithParryableWeapon(hit_target->currentProcess)) {
+		if (!ParryCheck::AttackingWithParryableWeapon(hit_target->GetActorRuntimeData().currentProcess)) {
 			logger::debug("Hit Target Not using Parryable Weapon!");
 			return false;
 		}
 
 		//-----------------------------------------------------------------------------------------------
-
 
 		//----------------------Check Hit Causer-----------------------------------------------------------
 
@@ -109,17 +105,17 @@ namespace MaxsuWeaponParry
 			return false;
 		}
 
-		if (hit_causer->IsGhost() || hit_causer->HasEffectWithArchetype(RE::EffectArchetypes::ArchetypeID::kEtherealize)) {
+		if (hit_causer->IsGhost() || hit_causer->AsMagicTarget()->HasEffectWithArchetype(RE::EffectArchetypes::ArchetypeID::kEtherealize)) {
 			logger::debug("Hit Causer Is Ghost or Etherealize!");
 			return false;
 		}
 
-		if (!hit_causer->currentProcess) {
+		if (!hit_causer->GetActorRuntimeData().currentProcess) {
 			logger::debug("Hit Causer AI Process Not Found!");
 			return false;
 		}
 
-		if (!ParryCheck::AttackingWithParryableWeapon(hit_causer->currentProcess)) {
+		if (!ParryCheck::AttackingWithParryableWeapon(hit_causer->GetActorRuntimeData().currentProcess)) {
 			logger::debug("Hit Causer Not using Parryable Weapon!");
 			return false;
 		}
@@ -128,4 +124,15 @@ namespace MaxsuWeaponParry
 		return true;
 	}
 
+	void ParryCheck::SetVariables(RE::Actor* hit_causer, RE::Actor* hit_target)
+	{
+		hit_target->SetGraphVariableBool("bSWP_InWeaponParry", true);
+		hit_causer->SetGraphVariableBool("bSWP_InWeaponParry", true);
+	}
+
+	void ParryCheck::ResetVariables(RE::Actor* hit_causer, RE::Actor* hit_target)
+	{
+		hit_target->SetGraphVariableBool("bSWP_InWeaponParry", false);
+		hit_causer->SetGraphVariableBool("bSWP_InWeaponParry", false);
+	}
 }
